@@ -1,6 +1,5 @@
 package com.example.trabfinal
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
@@ -10,9 +9,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
-class Depostit : AppCompatActivity() {
+class DepostitActivity() : AppCompatActivity() {
     private lateinit var inputDepostit: String
     private lateinit var db: DataBase
+    private lateinit var user: User
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,6 +22,10 @@ class Depostit : AppCompatActivity() {
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
+        }
+        val bundle = intent.extras
+        if (bundle != null) {
+            user = getIntent().getParcelableExtra("user")!!;
         }
         db = DataBase(this)
     }
@@ -33,14 +37,12 @@ class Depostit : AppCompatActivity() {
             Toast.makeText(this, "Valor inválido", Toast.LENGTH_SHORT).show()
         }
         else{
-            db.insertNewDeposit(inputDepostit.toDouble())
+            db.insertNewDeposit("brlBalance",user, inputDepostit.toDouble())
             Toast.makeText(this, "Depósito realizado com sucesso", Toast.LENGTH_SHORT).show()
         }
 
     }
     fun callMainView(view : View){
-        val intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)
         finish()
     }
 
