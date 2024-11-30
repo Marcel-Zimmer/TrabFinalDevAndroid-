@@ -5,11 +5,11 @@ plugins {
 
 android {
     namespace = "com.example.trabfinal"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.trabfinal"
-        minSdk = 28
+        minSdk = 35
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
