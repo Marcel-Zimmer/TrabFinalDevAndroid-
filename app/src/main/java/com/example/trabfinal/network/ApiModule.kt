@@ -1,8 +1,10 @@
 package com.example.trabfinal.network
 
+import androidx.collection.ArraySet
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -15,18 +17,21 @@ class ApiModule {
 
     val interaceApi: InterfaceApi = retrofit.create(InterfaceApi::class.java);
 
-    fun getCurrentExchangeRate(coinOrigin : String, coinDestination : String) {
-        println("entrou")
-        val concat = "$coinOrigin$coinDestination"
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val response = interaceApi.getBlockchainTicker(patch)
-                println(response.concat.bid)
-            } catch (e: Exception) {
-                println("Erro ao chamar a API: ${e.localizedMessage}")
+    suspend fun getCurrentExchangeRate(coinOrigin: String, coinDestination: String): Double {
+        var coinBid: Double = 0.0
+        val concat = "$coinOrigin-$coinDestination"
+        try {
+            val response = withContext(Dispatchers.IO) {
+                interaceApi.getBlockchainTicker(concat)
             }
+            val key = response.keys.first()
+            coinBid = response[key]?.bid?.toString()?.toDouble() ?: 0.0
+        } catch (e: Exception) {
+            println("Erro ao chamar a API: ${e.localizedMessage}")
         }
+        return coinBid
     }
+
 
 }
 

@@ -6,6 +6,6 @@ import retrofit2.http.Path
 
 interface InterfaceApi {
         @GET("json/last/{coin}")
-        suspend fun getBlockchainTicker(@Path("coin") coin: String): CoinResponse
+        suspend fun getBlockchainTicker(@Path("coin") coin: String): Map<String, CoinData>
 
 }

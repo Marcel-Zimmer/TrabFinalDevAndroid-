@@ -1,31 +1,7 @@
 package com.example.trabfinal.network
 
 data class CoinResponse(
-    val USDBRL : CoinData,
-    val EURBRL : CoinData,
-    val BTCBRL : CoinData,
-    val ETHBRL : CoinData,
-
-    val EURUSD : CoinData,
-    val BTCUSD : CoinData,
-    val ETHUSD : CoinData,
-    val BRLUSD : CoinData,
-
-    val USDEUR : CoinData,
-    val BTCEUR : CoinData,
-    val ETHEUR : CoinData,
-    val BRLEUR : CoinData,
-
-    val USDETH : CoinData,
-    val BTCETH : CoinData,
-    val EURETH : CoinData,
-    val BRLETH : CoinData,
-
-    val USDBTC : CoinData,
-    val ETHBTC : CoinData,
-    val EURBTC : CoinData,
-    val BRLBTC : CoinData,
-
+    var name:String
 
 )
 

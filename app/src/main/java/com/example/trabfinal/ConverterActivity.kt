@@ -1,16 +1,22 @@
 package com.example.trabfinal
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.Spinner
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.trabfinal.network.ApiModule
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class ConverterActivity : AppCompatActivity() {
     lateinit var coinOriginSelected :String
@@ -19,6 +25,8 @@ class ConverterActivity : AppCompatActivity() {
     lateinit var api : ApiModule
     lateinit var spinnerCoinOrigin: Spinner
     lateinit var spinnerCoinDestination: Spinner
+    lateinit var textResult : TextView
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -89,11 +97,15 @@ class ConverterActivity : AppCompatActivity() {
     fun tradeCoins(view: View) {
         coinOriginSelected = spinnerCoinOrigin.selectedItem.toString()
         coinDestinationSelected = spinnerCoinDestination.selectedItem.toString()
-        //currencyAmount = findViewById(R.id.editTextNumberDecimal2)
-        //val amount = currencyAmount.text.toString().toDouble()
-        api= ApiModule();
-        api.getCurrentExchangeRate(coinOriginSelected,coinDestinationSelected)
+        currencyAmount = findViewById<EditText>(R.id.editTextNumberDecimal2)
+        textResult = findViewById<TextView>(R.id.textView8)
+        val amount = currencyAmount.getText().toString().toDouble()
+        api = ApiModule();
+        CoroutineScope(Dispatchers.Main).launch {
+            val exchangeRate: Double= api.getCurrentExchangeRate(coinOriginSelected, coinDestinationSelected)
+            textResult.text = (exchangeRate * amount).toString()
 
+        }
 
     }
 }

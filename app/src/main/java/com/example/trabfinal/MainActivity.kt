@@ -34,33 +34,13 @@ class MainActivity : AppCompatActivity() {
         api = ApiModule()
         updateBalanceBrl()
 
-        // Chamada para obter a cotação
-        CoroutineScope(Dispatchers.Main).launch {
-            // Aqui você chama a função getExchangeRate
-            getExchangeRate("USD-BRL") // Passa o parâmetro 'USD-BRL' para obter o valor de câmbio
-        }
-
-
-
     }
     override fun onResume() {
         super.onResume();
         updateBalanceBrl();
     }
 
-    suspend fun getExchangeRate(path: String) {
-        try {
-            // Chama a API e obtém a resposta a
-            val response = api.interaceApi.getBlockchainTicker(path)
 
-            // Verifica a resposta e imprime os dados
-            Log.d("API Response", "Resposta da API: $response")
-
-
-        } catch (e: Exception) {
-            Log.e("API Error", "Erro ao chamar a API: ${e.localizedMessage}")
-        }
-    }
 
     fun callDepositView(view : View){
         val intent = Intent(this, DepostitActivity::class.java)
