@@ -3,10 +3,12 @@ package com.example.trabfinal
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.EditText
+import android.widget.ProgressBar
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
@@ -19,13 +21,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class ConverterActivity : AppCompatActivity() {
-    lateinit var coinOriginSelected :String
-    lateinit var coinDestinationSelected :String
-    lateinit var currencyAmount  : EditText
-    lateinit var api : ApiModule
-    lateinit var spinnerCoinOrigin: Spinner
+    private lateinit var coinOriginSelected :String
+    private lateinit var coinDestinationSelected :String
+    private lateinit var currencyAmount  : EditText
+    private lateinit var api : ApiModule
+    private lateinit var spinnerCoinOrigin: Spinner
     lateinit var spinnerCoinDestination: Spinner
-    lateinit var textResult : TextView
+    private lateinit var textConverter : TextView
+    private lateinit var progressBar : ProgressBar
+
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,6 +44,12 @@ class ConverterActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        textConverter = findViewById(R.id.textView3);
+        progressBar = findViewById(R.id.progressBar);
+        currencyAmount = findViewById(R.id.editTextNumberDecimal2)
+        textConverter.visibility = View.INVISIBLE
+        progressBar.visibility = View.INVISIBLE
 
         val listCoins = listOf("Selecione uma moeda","BRL", "USD", "EUR", "ETH", "BTC");
         spinnerCoinOrigin= findViewById(R.id.spinner2)
@@ -86,7 +97,11 @@ class ConverterActivity : AppCompatActivity() {
 
             }
 
-        }
+
+
+
+    }
+
 
     }
     fun closeView(view: View) {
@@ -95,15 +110,17 @@ class ConverterActivity : AppCompatActivity() {
     }
 
     fun tradeCoins(view: View) {
-        coinOriginSelected = spinnerCoinOrigin.selectedItem.toString()
-        coinDestinationSelected = spinnerCoinDestination.selectedItem.toString()
-        currencyAmount = findViewById<EditText>(R.id.editTextNumberDecimal2)
-        textResult = findViewById<TextView>(R.id.textView8)
-        val amount = currencyAmount.getText().toString().toDouble()
+        textConverter.visibility = View.VISIBLE
+        progressBar.visibility = View.VISIBLE
+
         api = ApiModule();
         CoroutineScope(Dispatchers.Main).launch {
+            coinOriginSelected = spinnerCoinOrigin.selectedItem.toString()
+            coinDestinationSelected = spinnerCoinDestination.selectedItem.toString()
             val exchangeRate: Double= api.getCurrentExchangeRate(coinOriginSelected, coinDestinationSelected)
-            textResult.text = (exchangeRate * amount).toString()
+            val amount = currencyAmount.getText().toString().toDouble()
+            progressBar.visibility = View.INVISIBLE
+            textConverter.text = "Conversão concluída";
 
         }
 

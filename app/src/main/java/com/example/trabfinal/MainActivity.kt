@@ -2,7 +2,6 @@ package com.example.trabfinal
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
@@ -10,9 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.trabfinal.network.ApiModule
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private lateinit var db : DataBase
@@ -29,8 +25,8 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        user = User()
         db = DataBase(this)
+        user = db.user
         api = ApiModule()
         updateBalanceBrl()
 
@@ -43,21 +39,23 @@ class MainActivity : AppCompatActivity() {
 
 
     fun callDepositView(view : View){
-        val intent = Intent(this, DepostitActivity::class.java)
-        intent.putExtra("user", user);
+        val intent = Intent(this, DepositActivity::class.java)
         startActivity(intent)
     }
     fun callTradeView(view : View){
         val intent = Intent(this, ConverterActivity::class.java)
-        //intent.putExtra("user", user);
+        startActivity(intent)
+    }
+    fun callListView(){
+        val intent = Intent(this, ListViewActivity::class.java)
         startActivity(intent)
     }
 
 
-    fun updateBalanceBrl(){
-        db.getBalance(user)
+    private fun updateBalanceBrl(){
+        db.getBalance()
         textBalance = findViewById(R.id.textViewBalance)
-        textBalance.text = user.brlBalance.toString()
+        textBalance.text = "Saldo R$ ${user.brlBalance}"
     }
 
 

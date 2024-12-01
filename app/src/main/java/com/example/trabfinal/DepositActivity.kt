@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
-class DepostitActivity() : AppCompatActivity() {
+class DepositActivity() : AppCompatActivity() {
     private lateinit var inputDepostit: String
     private lateinit var db: DataBase
     private lateinit var user: User
@@ -23,11 +23,8 @@ class DepostitActivity() : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        val bundle = intent.extras
-        if (bundle != null) {
-            user = getIntent().getParcelableExtra("user")!!;
-        }
         db = DataBase(this)
+        user = db.user
     }
 
     fun depositValue(view : View){
@@ -37,7 +34,7 @@ class DepostitActivity() : AppCompatActivity() {
             Toast.makeText(this, "Valor inválido", Toast.LENGTH_SHORT).show()
         }
         else{
-            db.insertNewDeposit("brlBalance",user, inputDepostit.toDouble())
+            db.insertNewDeposit("brlBalance",inputDepostit.toDouble())
             Toast.makeText(this, "Depósito realizado com sucesso", Toast.LENGTH_SHORT).show()
         }
 
