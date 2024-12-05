@@ -1,5 +1,6 @@
 package com.example.trabfinal
 
+import android.graphics.pdf.content.PdfPageGotoLinkContent.Destination
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -11,6 +12,7 @@ import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Spinner
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -29,6 +31,8 @@ class ConverterActivity : AppCompatActivity() {
     lateinit var spinnerCoinDestination: Spinner
     private lateinit var textConverter : TextView
     private lateinit var progressBar : ProgressBar
+    private lateinit var user : User
+    private lateinit var db : DataBase
 
 
 
@@ -50,6 +54,9 @@ class ConverterActivity : AppCompatActivity() {
         currencyAmount = findViewById(R.id.editTextNumberDecimal2)
         textConverter.visibility = View.INVISIBLE
         progressBar.visibility = View.INVISIBLE
+        db = DataBase(this)
+        user = db.user
+
 
         val listCoins = listOf("Selecione uma moeda","BRL", "USD", "EUR", "ETH", "BTC");
         spinnerCoinOrigin= findViewById(R.id.spinner2)
@@ -110,19 +117,79 @@ class ConverterActivity : AppCompatActivity() {
     }
 
     fun tradeCoins(view: View) {
-        textConverter.visibility = View.VISIBLE
-        progressBar.visibility = View.VISIBLE
+        coinOriginSelected = spinnerCoinOrigin.selectedItem.toString()
+        coinDestinationSelected = spinnerCoinDestination.selectedItem.toString()
+        val amount = currencyAmount.getText().toString().toDouble()
 
-        api = ApiModule();
-        CoroutineScope(Dispatchers.Main).launch {
-            coinOriginSelected = spinnerCoinOrigin.selectedItem.toString()
-            coinDestinationSelected = spinnerCoinDestination.selectedItem.toString()
-            val exchangeRate: Double= api.getCurrentExchangeRate(coinOriginSelected, coinDestinationSelected)
-            val amount = currencyAmount.getText().toString().toDouble()
-            progressBar.visibility = View.INVISIBLE
-            textConverter.text = "Conversão concluída";
+        if(testBalance(coinOriginSelected, amount)){
+            textConverter.visibility = View.VISIBLE
+            progressBar.visibility = View.VISIBLE
+            api = ApiModule();
+            CoroutineScope(Dispatchers.Main).launch {
+                val exchangeRate: Double= api.getCurrentExchangeRate(coinOriginSelected, coinDestinationSelected)
+                setBalance(coinOriginSelected, coinDestinationSelected, exchangeRate * amount, amount)
+                db.updateBalance()
+                progressBar.visibility = View.INVISIBLE
+                textConverter.text = "o valor convertido foi de :" + exchangeRate * amount + coinDestinationSelected ;
+                currencyAmount.setText("")
+
+            }
 
         }
+        else{
+            Toast.makeText(this, "Saldo insuficiente", Toast.LENGTH_SHORT).show()
+        }
 
+    }
+
+    fun testBalance(coin : String, value: Double):Boolean{
+        var balance = 0.0
+        balance = if(coin.equals("BRL")){
+            user.brlBalance
+        } else if(coin.equals("USD")){
+            user.usdBalance
+        } else if(coin.equals("EUR")){
+            user.eurBalance
+        } else if(coin.equals("BTC")){
+            user.bitcoinBalance
+        } else{
+            user.etherBalance
+        }
+        return if(value <= balance && balance>0){
+            true
+        } else{
+            false
+        }
+    }
+    fun setBalance(coinOrigem : String, coinDestination: String, value : Double, amout:Double){
+        if(coinOrigem.equals("BRL")){
+            user.setBrlBalance(user.brlBalance - amout)
+        }
+        else if(coinOrigem.equals("USD")){
+            user.setUsdBalance(user.usdBalance - amout)
+        }
+        else if(coinOrigem.equals("EUR")){
+            user.setEurBalance(user.eurBalance - amout)
+        }
+        else if(coinOrigem.equals("BTC")){
+            user.setBitcoinBalance(user.bitcoinBalance - amout)
+        }else{
+            user.setEtherBalance(user.etherBalance - amout)
+        }
+
+        if(coinDestination.equals("BRL")){
+            user.setBrlBalance(user.brlBalance + value)
+        }
+        else if(coinDestination.equals("USD")){
+            user.setUsdBalance(user.usdBalance + value)
+        }
+        else if(coinDestination.equals("EUR")){
+            user.setEurBalance(user.eurBalance + value)
+        }
+        else if(coinDestination.equals("BTC")){
+            user.setBitcoinBalance(user.bitcoinBalance + value)
+        }else{
+            user.setEtherBalance(user.etherBalance + value)
+        }
     }
 }

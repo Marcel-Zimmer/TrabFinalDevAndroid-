@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this, ConverterActivity::class.java)
         startActivity(intent)
     }
-    fun callListView(){
+    fun callListView(view : View){
         val intent = Intent(this, ListViewActivity::class.java)
         startActivity(intent)
     }
@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity() {
     private fun updateBalanceBrl(){
         db.getBalance()
         textBalance = findViewById(R.id.textViewBalance)
-        textBalance.text = "Saldo R$ ${user.brlBalance}"
+        textBalance.text = "Saldo R$ %.2f".format(user.brlBalance)
     }
 
 

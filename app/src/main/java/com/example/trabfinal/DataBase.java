@@ -35,8 +35,8 @@ public class DataBase extends SQLiteOpenHelper {
         values.put("brlBalance", 1.0);
         values.put("usdBalance", 1.0);
         values.put("eurBalance", 1.0);
-        values.put("bitcoinBalance", 1.0);
-        values.put("etherBalance", 1.0);
+        values.put("bitcoinBalance", 10.0);
+        values.put("etherBalance", 10.0);
         db.insert("user", null, values);
     }
 
@@ -111,6 +111,22 @@ public class DataBase extends SQLiteOpenHelper {
         user.setEtherBalance(etherBalance);
         cursor.close();
         db.close();
+    }
+    public void updateBalance(){
+        try (SQLiteDatabase db = this.getWritableDatabase()) {
+            ContentValues values = new ContentValues();
+            values.put("brlBalance", user.getBrlBalance());
+            values.put("usdBalance", user.getUsdBalance());
+            values.put("eurBalance", user.getEurBalance());
+            values.put("bitcoinBalance", user.getBitcoinBalance());
+            values.put("etherBalance", user.getEtherBalance());
+            int rowsAffected = db.update("user", values, "id = ?", new String[]{"1"});
+            if (rowsAffected == 0) {
+                throw new SQLException("Falha ao atualizar o saldo.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
